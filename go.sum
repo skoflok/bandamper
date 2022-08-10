@@ -1,0 +1,4 @@
+github.com/go-sql-driver/mysql v1.6.0 h1:BCTh4TKNUYmOmMUcQ3IipzF5prigylS7XXjEkfCHuOE=
+github.com/go-sql-driver/mysql v1.6.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
+github.com/skoflok/bandcamp_api_parser v0.0.2 h1:l/htnNNafQ5trslmsLOozTT7M4zbPn4RgDEUxLkL80w=
+github.com/skoflok/bandcamp_api_parser v0.0.2/go.mod h1:I3kTUyPXb4L83JgTmXU7/auHuZuLxqDztLKCy5Y+M+c=
