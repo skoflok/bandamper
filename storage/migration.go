@@ -11,7 +11,7 @@ import (
 )
 
 func Up() {
-	db := Database(fmt.Sprint(config.NewDB()))
+	db := Open(fmt.Sprint(config.NewDB()))
 	defer db.Close()
 
 	driver, err := mysql.WithInstance(db, &mysql.Config{})

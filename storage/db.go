@@ -8,7 +8,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func Database(dsn string) *sql.DB {
+func Open(dsn string) *sql.DB {
 	var db *sql.DB
 	var err error
 	if db, err = sql.Open("mysql", dsn); err != nil {
