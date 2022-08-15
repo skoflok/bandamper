@@ -17,6 +17,7 @@ func main() {
 	os.Setenv("DATABASE_HOST", "localhost")
 	os.Setenv("DATABASE_PORT", "3306")
 	// fmt.Println(parser.FetchReleasesFromHome(parser.NewQueryArgs(0)))
+	fmt.Println(config.NewDB())
 	db := storage.Open(fmt.Sprint(config.NewDB()))
 	defer db.Close()
 	fmt.Println(db)
