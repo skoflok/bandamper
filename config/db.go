@@ -12,6 +12,7 @@ type db struct {
 	protocol string
 	host     string
 	port     string
+	driver   string
 }
 
 func NewDB() *db {
@@ -22,10 +23,19 @@ func NewDB() *db {
 		os.Getenv("DATABASE_PROTOCOL"),
 		os.Getenv("DATABASE_HOST"),
 		os.Getenv("DATABASE_PORT"),
+		os.Getenv("DATABASE_DRIVER"),
 	}
 	return db
 }
 
 func (db *db) String() string {
-	return fmt.Sprintf("%s:%s@%s(%s:%s)/%s", db.user, db.password, db.protocol, db.host, db.port, db.database)
+	return fmt.Sprintf("%s:%s@%s(%s:%s)/%s?multiStatements=true", db.user, db.password, db.protocol, db.host, db.port, db.database)
+}
+
+func NewDSN() string {
+	return fmt.Sprint(NewDB())
+}
+
+func (db *db) Driver() string {
+	return db.driver
 }

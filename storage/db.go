@@ -8,10 +8,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func Open(dsn string) *sql.DB {
+func Open(driver string, dsn string) *sql.DB {
 	var db *sql.DB
 	var err error
-	if db, err = sql.Open("mysql", dsn); err != nil {
+	if db, err = sql.Open(driver, dsn); err != nil {
 		log.Fatalf("Database connect error: %v", err)
 	}
 	if err = db.Ping(); err != nil {

@@ -8,20 +8,52 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/skoflok/bandamper/config"
+	"github.com/skoflok/bandamper/helpers"
 )
 
-func Up() {
-	db := Open(fmt.Sprint(config.NewDB()))
+func initMigrate() *migrate.Migrate {
+	cfg := config.NewDB()
+	driver := cfg.Driver()
+
+	db := Open(driver, cfg.String())
 	defer db.Close()
 
-	driver, err := mysql.WithInstance(db, &mysql.Config{})
-
+	instance, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {
-		log.Fatalf("Migration error: %v", err)
+		log.Fatalf("Migration instance error: %v", err)
 	}
 
+	wd := helpers.Wd()
+
 	m, err := migrate.NewWithDatabaseInstance(
-		"file:///migrations",
-		"mysql", driver)
-	m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
+		fmt.Sprintf("file://%s/migrations/%s", wd, driver),
+		driver,
+		instance,
+	)
+
+	if err != nil {
+		log.Fatalf("Migration db istance error: %v", err)
+	}
+	return m
+}
+
+func Up() {
+	m := initMigrate()
+	if err := m.Up(); err != nil {
+		log.Fatalf("Migration Up error: %v", err)
+	}
+}
+
+func Down() {
+	m := initMigrate()
+	if err := m.Down(); err != nil {
+		log.Fatalf("Migration Down error: %v", err)
+	}
+}
+
+func Drop() {
+	m := initMigrate()
+	if err := m.Drop(); err != nil {
+		log.Fatalf("Migration Drop error: %v", err)
+	}
 }
