@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-type db struct {
+type Db struct {
 	user     string
 	password string
 	database string
@@ -15,8 +15,8 @@ type db struct {
 	driver   string
 }
 
-func NewDB() *db {
-	db := &db{
+func NewDB() *Db {
+	db := &Db{
 		os.Getenv("DATABASE_USER"),
 		os.Getenv("DATABASE_PASSWORD"),
 		os.Getenv("DATABASE_DBNAME"),
@@ -28,7 +28,7 @@ func NewDB() *db {
 	return db
 }
 
-func (db *db) String() string {
+func (db *Db) String() string {
 	return fmt.Sprintf("%s:%s@%s(%s:%s)/%s?multiStatements=true", db.user, db.password, db.protocol, db.host, db.port, db.database)
 }
 
@@ -36,6 +36,6 @@ func NewDSN() string {
 	return fmt.Sprint(NewDB())
 }
 
-func (db *db) Driver() string {
+func (db *Db) Driver() string {
 	return db.driver
 }

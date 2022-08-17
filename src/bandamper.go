@@ -9,7 +9,7 @@ import (
 
 	"github.com/skoflok/bandamper/config"
 	storage "github.com/skoflok/bandamper/storage"
-	_ "github.com/skoflok/bandcamp_api_parser/api"
+	"github.com/skoflok/bandcamp_api_parser/api"
 )
 
 func main() {
@@ -31,6 +31,8 @@ func main() {
 	case "test-db":
 		testDb()
 	case "serve":
+	case "fetch-first":
+		fetchFirstRelease()
 	case "migrate":
 		migrate(checkSubcommand("Migration subcommand is not specified!"))
 	case "run":
@@ -79,4 +81,20 @@ func checkSubcommand(callbackError string) (command string) {
 		log.Fatalln(callbackError)
 	}
 	return command
+}
+
+func fetchFirstRelease() {
+	q := api.NewQueryArgs(0)
+	r, err := api.FetchReleasesFromHome(q)
+	if err != nil {
+		log.Fatalf("Error from bandcamp api: %v", err)
+	}
+
+	if len(r.Items) > 0 {
+		id, err := storage.StoreRelease(r.Items[0])
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println(id)
+	}
 }

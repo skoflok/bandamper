@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
-	github.com/skoflok/bandcamp_api_parser v0.0.2
+	github.com/skoflok/bandcamp_api_parser v0.0.3
 )
 
 require (

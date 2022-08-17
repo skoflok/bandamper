@@ -23,3 +23,7 @@ func Open(driver string, dsn string) *sql.DB {
 	db.SetMaxIdleConns(3)
 	return db
 }
+
+func getInsertReleaseQuery() string {
+	return "INSERT INTO releases(type, release_id, band_id, is_preorder, publish_date, genre, album, artist, featured_track, subdomain, slug) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+}

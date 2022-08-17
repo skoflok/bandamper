@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE releases DROP COLUMN subdomain;
+ALTER TABLE releases DROP COLUMN slug;
+
+COMMIT;

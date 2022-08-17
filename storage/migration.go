@@ -12,10 +12,8 @@ import (
 )
 
 func initMigrate() *migrate.Migrate {
-	cfg := config.NewDB()
-	driver := cfg.Driver()
-
-	db := Open(driver, cfg.String())
+	dbConf := config.NewDB()
+	db := Open(dbConf.Driver(), dbConf.String())
 	defer db.Close()
 
 	instance, err := mysql.WithInstance(db, &mysql.Config{})
@@ -26,8 +24,8 @@ func initMigrate() *migrate.Migrate {
 	wd := helpers.Wd()
 
 	m, err := migrate.NewWithDatabaseInstance(
-		fmt.Sprintf("file://%s/migrations/%s", wd, driver),
-		driver,
+		fmt.Sprintf("file://%s/migrations/%s", wd, dbConf.Driver()),
+		dbConf.Driver(),
 		instance,
 	)
 
