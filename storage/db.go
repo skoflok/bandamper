@@ -25,5 +25,41 @@ func Open(driver string, dsn string) *sql.DB {
 }
 
 func getInsertReleaseQuery() string {
-	return "INSERT INTO releases(type, release_id, band_id, is_preorder, publish_date, genre, album, artist, featured_track, subdomain, slug) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	return "INSERT INTO releases(type, release_id, band_id, is_preorder, publish_date, genre, album, artist, featured_track, subdomain, slug, updated_at, created_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+}
+
+func getReleaseByIdQuery() string {
+	return `SELECT
+id,
+type,
+release_id,
+band_id,
+is_preorder,
+publish_date,
+genre,
+album,
+artist,
+featured_track,
+subdomain,
+slug,
+updated_at,
+created_at
+FROM releases where release_id = ?
+;`
+}
+
+func getUpdateReleaseByIdQuery() string {
+	return `UPDATE releases set 
+	type = ?,
+	band_id = ?,
+	is_preorder = ?,
+	publish_date = ? ,
+	genre = ? ,
+	album = ? ,
+	artist = ? ,
+	featured_track = ?,
+	subdomain = ?,
+	slug = ? ,
+	updated_at = ?
+	where id = ?`
 }

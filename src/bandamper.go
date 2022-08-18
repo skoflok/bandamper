@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"flag"
 
@@ -33,6 +34,8 @@ func main() {
 	case "serve":
 	case "fetch-first":
 		fetchFirstRelease()
+	case "fetch-page":
+		fetchPage(flag.Args()[1:])
 	case "migrate":
 		migrate(checkSubcommand("Migration subcommand is not specified!"))
 	case "run":
@@ -97,4 +100,23 @@ func fetchFirstRelease() {
 		}
 		fmt.Println(id)
 	}
+}
+
+func fetchPage(args []string) {
+	page, err := strconv.Atoi(args[0])
+	if err != nil {
+		log.Fatalf("Page not defined %v", err)
+	}
+	q := api.NewQueryArgs(page)
+	releases, err := api.FetchReleasesFromHome(q)
+	if err != nil {
+		log.Fatalf("Error from bandcamp api: %v", err)
+	}
+
+	count, err := storage.BulkStoreReleases(releases)
+	if err != nil {
+		log.Fatalf("Bulk store error: %v", err)
+	}
+
+	fmt.Printf("Store %d releases\n", count)
 }

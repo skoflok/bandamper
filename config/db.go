@@ -29,7 +29,7 @@ func NewDB() *Db {
 }
 
 func (db *Db) String() string {
-	return fmt.Sprintf("%s:%s@%s(%s:%s)/%s?multiStatements=true", db.user, db.password, db.protocol, db.host, db.port, db.database)
+	return fmt.Sprintf("%s:%s@%s(%s:%s)/%s?multiStatements=true&parseTime=true", db.user, db.password, db.protocol, db.host, db.port, db.database)
 }
 
 func NewDSN() string {
