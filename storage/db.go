@@ -60,6 +60,29 @@ func getUpdateReleaseByIdQuery() string {
 	featured_track = ?,
 	subdomain = ?,
 	slug = ? ,
-	updated_at = ?
+	updated_at = ?,
+	is_send = ?
 	where id = ?`
+}
+
+func getNotSentReleasesByDateQuery() string {
+	return `SELECT
+	id,
+	type,
+	release_id,
+	band_id,
+	is_preorder,
+	publish_date,
+	genre,
+	album,
+	artist,
+	featured_track,
+	subdomain,
+	slug,
+	updated_at,
+	created_at
+	FROM releases 
+	where is_sent = 0 and is_preorder = 0
+	and publish_date BETWEEN ? AND ?
+	;`
 }

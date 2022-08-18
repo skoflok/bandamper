@@ -23,11 +23,12 @@ type Release struct {
 	FeaturedTrack string
 	Subdomain     string
 	Slug          string
+	IsSent        bool
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
 
-const apiLayout = "_2 Jan 2006 15:04:05 GMT"
+const apiLayout = "02 Jan 2006 15:04:05 GMT"
 const dbLayout = "2006-01-02 15:04:05"
 
 func BulkStoreReleases(releases api.Releases) (count int, err error) {
@@ -51,12 +52,49 @@ func StoreRelease(r api.Release) (rowId int64, err error) {
 	if !ok {
 		return insertRelease(r)
 	} else {
-		return updateRelease(r, exist.Id)
+		return updateRelease(r, exist)
 	}
 }
 
-func GetReleaseByDate(start time.Time, end time.Time) (items []string, err error) {
-	return
+func GetNotSentReleasesByDate(start time.Time, end time.Time) (releases []Release, err error) {
+	releases = []Release{}
+
+	dbConf := config.NewDB()
+	db := Open(dbConf.Driver(), dbConf.String())
+	defer db.Close()
+
+	rows, err := db.Query(getNotSentReleasesByDateQuery(), start.Format(dbLayout), end.Format(dbLayout))
+
+	if err != nil {
+		return releases, fmt.Errorf("Query is sent by date error: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		r := Release{}
+		err := rows.Scan(
+			&r.Id,
+			&r.Type,
+			&r.ReleaseId,
+			&r.BandId,
+			&r.IsPreorder,
+			&r.PublishDate,
+			&r.Genre,
+			&r.Album,
+			&r.Artist,
+			&r.FeaturedTrack,
+			&r.Subdomain,
+			&r.Slug,
+			&r.UpdatedAt,
+			&r.CreatedAt,
+		)
+		if err != nil {
+			return releases, err
+		}
+		releases = append(releases, r)
+	}
+
+	return releases, nil
 }
 
 func GetReleaseByReleaseId(id int) (r *Release, ok bool) {
@@ -95,7 +133,10 @@ func GetReleaseByReleaseId(id int) (r *Release, ok bool) {
 }
 
 func (r *Release) GetAlbumUrl() (url string, ok bool) {
-	return
+	if r.Slug != "" && r.Subdomain != "" {
+		return fmt.Sprintf("https://%s.bandcamp.com/album/%s", r.Subdomain, r.Slug), true
+	}
+	return "", false
 }
 
 func insertRelease(r api.Release) (rowId int64, err error) {
@@ -109,7 +150,6 @@ func insertRelease(r api.Release) (rowId int64, err error) {
 	if err != nil {
 		return 0, fmt.Errorf("Insert statement prepare error: %v", err)
 	}
-
 	defer stmt.Close()
 
 	publishDate, err := time.Parse(apiLayout, r.PublishDate)
@@ -141,7 +181,8 @@ func insertRelease(r api.Release) (rowId int64, err error) {
 	return result.LastInsertId()
 }
 
-func updateRelease(r api.Release, id int64) (rowId int64, err error) {
+func updateRelease(r api.Release, exist *Release) (rowId int64, err error) {
+
 	dbConf := config.NewDB()
 	db := Open(dbConf.Driver(), dbConf.String())
 	defer db.Close()
@@ -169,12 +210,12 @@ func updateRelease(r api.Release, id int64) (rowId int64, err error) {
 		r.UrlHints.Subdomain,
 		r.UrlHints.Slug,
 		updatedAt.Format(dbLayout),
-		id,
+		exist.Id,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("Exec update query error: %v", err)
 	}
 	_, err = result.LastInsertId()
 
-	return id, err
+	return exist.Id, err
 }

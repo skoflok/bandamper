@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"flag"
 
@@ -124,5 +125,43 @@ func fetchPage(args []string) {
 }
 
 func releases(args []string) {
+	input := "2006-01-02"
+	sub := args[0]
+	switch sub {
+	case "get-curent-date":
+		year, month, day := time.Now().Date()
+		start := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
+		end := time.Date(year, month, day, 23, 59, 59, 0, time.UTC)
+		releases, err := storage.GetNotSentReleasesByDate(start, end)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(releases)
+	case "get-by-date":
+		date, err := time.Parse(input, args[1])
+		if err != nil {
+			log.Fatalln(err)
+		}
+		year, month, day := date.Date()
+		start := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
+		end := time.Date(year, month, day, 23, 59, 59, 0, time.UTC)
+		releases, err := storage.GetNotSentReleasesByDate(start, end)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(releases)
+	case "get-not-sent":
+		year, month, day := time.Now().Date()
+		start := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+		end := time.Date(year, month, day, 23, 59, 59, 0, time.UTC)
+		releases, err := storage.GetNotSentReleasesByDate(start, end)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(releases)
+		fmt.Println(releases[0].GetAlbumUrl())
 
+	default:
+		log.Fatalf("Comand %s no defined", sub)
+	}
 }

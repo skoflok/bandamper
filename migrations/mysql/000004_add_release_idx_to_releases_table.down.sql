@@ -1,5 +1,5 @@
 BEGIN;
 
-ALTER TABLE releases DROP INDEX release release_idx;
+ALTER TABLE releases DROP INDEX release_idx;
 
 COMMIT;
