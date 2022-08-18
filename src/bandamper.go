@@ -11,10 +11,13 @@ import (
 
 	"github.com/skoflok/bandamper/config"
 	storage "github.com/skoflok/bandamper/storage"
+	"github.com/skoflok/bandamper/telegram"
 	"github.com/skoflok/bandcamp_api_parser/api"
 )
 
 func main() {
+
+	os.Setenv("CHANNEL_ID", "-1001240126629")
 
 	os.Setenv("DATABASE_USER", "localwp")
 	os.Setenv("DATABASE_PASSWORD", "localwp")
@@ -43,6 +46,8 @@ func main() {
 		migrate(checkSubcommand("Migration subcommand is not specified!"))
 	case "run":
 		run(checkSubcommand("Subcommand is not specified!"))
+	case "tg":
+		telegramCmd(flag.Args()[1:])
 	case "help":
 		help()
 	default:
@@ -163,5 +168,12 @@ func releases(args []string) {
 
 	default:
 		log.Fatalf("Comand %s no defined", sub)
+	}
+}
+
+func telegramCmd(args []string) {
+	r, ok := storage.GetReleaseByReleaseId(2050655424)
+	if ok {
+		telegram.SendRelease(r)
 	}
 }

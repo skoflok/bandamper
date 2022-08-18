@@ -243,3 +243,8 @@ func (r *Release) SetSendingStatus(is bool) (err error) {
 
 	return err
 }
+
+func (r *Release) ToTgMessage() string {
+	url, _ := r.GetAlbumUrl()
+	return fmt.Sprintf("%s - %s \n %s \n %s \n %s", r.Artist, r.Album, r.Genre, r.FeaturedTrack, url)
+}
