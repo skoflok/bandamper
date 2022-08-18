@@ -32,6 +32,8 @@ func main() {
 	case "test-db":
 		testDb()
 	case "serve":
+	case "releases":
+		releases(flag.Args()[1:])
 	case "fetch-first":
 		fetchFirstRelease()
 	case "fetch-page":
@@ -119,4 +121,8 @@ func fetchPage(args []string) {
 	}
 
 	fmt.Printf("Store %d releases\n", count)
+}
+
+func releases(args []string) {
+
 }
