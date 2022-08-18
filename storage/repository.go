@@ -219,3 +219,27 @@ func updateRelease(r api.Release, exist *Release) (rowId int64, err error) {
 
 	return exist.Id, err
 }
+
+func (r *Release) SetSendingStatus(is bool) (err error) {
+	dbConf := config.NewDB()
+	db := Open(dbConf.Driver(), dbConf.String())
+	defer db.Close()
+
+	stmt, err := db.Prepare(getUpdateSendingStatusQuery())
+
+	if err != nil {
+		return fmt.Errorf("Update sending statement prepare error: %v", err)
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(
+		is,
+		r.Id,
+	)
+	if err != nil {
+		return fmt.Errorf("Exec update sending status error: %v", err)
+	}
+	_, err = result.LastInsertId()
+
+	return err
+}

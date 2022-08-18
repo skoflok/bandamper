@@ -86,3 +86,9 @@ func getNotSentReleasesByDateQuery() string {
 	and publish_date BETWEEN ? AND ?
 	;`
 }
+
+func getUpdateSendingStatusQuery() string {
+	return `UPDATE releases set 
+	is_send = ?
+	where id = ?`
+}
