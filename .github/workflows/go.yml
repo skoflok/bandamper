@@ -18,7 +18,7 @@ jobs:
     - name: Build
       run: go build -o ./build/bandamper -v ./src/bandamper.go
     - name: Create .env
-      run: echo "{{secrets.MULTILINE_SECRET_TEST}}" >> .env
+      run: echo "${{secrets.MULTILINE_SECRET_TEST}}" >> .env
     - name: Create SSH key
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
