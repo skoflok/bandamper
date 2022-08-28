@@ -1,0 +1,35 @@
+name: Go
+
+on:
+  push:
+    branches: [ "master" ]
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+    - name: Vendor
+      run: go mod download
+    - name: Build
+      run: go build -o ./build/bandamper -v ./src/bandamper.go
+    - name: Create .env
+      run: echo "${{secrets.ENVS}}" >> .env
+    - name: Create SSH key
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{secrets.DEPLOY_HOST}} > ~/.ssh/known_hosts
+    - name: Deploy with rsync
+      run: rsync -rav .env migrations build/* migrations --delete "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}":"${{ secrets.DEPLOY_PATH }}"/
+    - name: Database migrate
+      run: |
+        DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+        ssh -tt "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}" "cd $DEPLOY_PATH && ./bandamper migrate up"
+        
+
+
