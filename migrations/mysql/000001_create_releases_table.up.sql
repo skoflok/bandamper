@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS releases (
     is_preorder SMALLINT default 0,
     publish_date DATETIME NOT NULL,
     genre VARCHAR(255) DEFAULT "",
-    album TEXT DEFAULT "",
-    artist TEXT DEFAULT "",
-    featured_track TEXT DEFAULT ""
+    album TEXT DEFAULT NULL,
+    artist TEXT DEFAULT NULL,
+    featured_track TEXT DEFAULT NULL
 );
 COMMIT;

@@ -39,6 +39,8 @@ func SendRelease(r *storage.Release) (err error) {
 
 	if _, err := botApi.Bot.Send(msg); err != nil {
 		panic(err)
+	} else {
+		r.SetSendingStatus(true)
 	}
 	return
 }

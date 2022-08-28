@@ -29,7 +29,7 @@ jobs:
     - name: Database migrate
       run: |
         DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
-        ssh -tt "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}" "cd $DEPLOY_PATH && export $(cat .env | xargs) && ./bandamper migrate up"
+        ssh -tt "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}" "cd $DEPLOY_PATH && source loadenv.sh && ./bandamper migrate up"
         
 
 
