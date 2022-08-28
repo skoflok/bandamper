@@ -61,7 +61,7 @@ func getUpdateReleaseByIdQuery() string {
 	subdomain = ?,
 	slug = ? ,
 	updated_at = ?,
-	is_send = ?
+	is_sent = ?
 	where id = ?`
 }
 
@@ -89,6 +89,6 @@ func getNotSentReleasesByDateQuery() string {
 
 func getUpdateSendingStatusQuery() string {
 	return `UPDATE releases set 
-	is_send = ?
+	is_sent = ?
 	where id = ?`
 }

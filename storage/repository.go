@@ -210,6 +210,7 @@ func updateRelease(r api.Release, exist *Release) (rowId int64, err error) {
 		r.UrlHints.Subdomain,
 		r.UrlHints.Slug,
 		updatedAt.Format(dbLayout),
+		exist.IsSent,
 		exist.Id,
 	)
 	if err != nil {
@@ -246,5 +247,12 @@ func (r *Release) SetSendingStatus(is bool) (err error) {
 
 func (r *Release) ToTgMessage() string {
 	url, _ := r.GetAlbumUrl()
-	return fmt.Sprintf("%s - %s \n %s \n %s \n %s", r.Artist, r.Album, r.Genre, r.FeaturedTrack, url)
+	return fmt.Sprintf("`%s - %s`\n(%s %s)\n%s\n[\xF0\x9F\x94\x89](%s)\n %s",
+		r.Artist,
+		r.Album,
+		r.PublishDate.Format("Jan"),
+		r.PublishDate.Format("2006"),
+		r.Genre,
+		r.FeaturedTrack,
+		url)
 }

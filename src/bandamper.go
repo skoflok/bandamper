@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"time"
 
@@ -17,20 +16,8 @@ import (
 
 func main() {
 
-	os.Setenv("CHANNEL_ID", "-1001240126629")
-
-	os.Setenv("DATABASE_USER", "localwp")
-	os.Setenv("DATABASE_PASSWORD", "localwp")
-	os.Setenv("DATABASE_DBNAME", "bandcamp")
-	os.Setenv("DATABASE_PROTOCOL", "tcp")
-	os.Setenv("DATABASE_HOST", "localhost")
-	os.Setenv("DATABASE_PORT", "3306")
-	os.Setenv("DATABASE_DRIVER", "mysql")
-	// fmt.Println(parser.FetchReleasesFromHome(parser.NewQueryArgs(0)))
-
 	flag.Parse()
 	command := flag.Arg(0)
-	fmt.Println(command)
 
 	switch command {
 	case "test-db":
@@ -50,6 +37,8 @@ func main() {
 		telegramCmd(flag.Args()[1:])
 	case "help":
 		help()
+	case "ticker":
+		ticker()
 	default:
 		help()
 	}
@@ -172,8 +161,44 @@ func releases(args []string) {
 }
 
 func telegramCmd(args []string) {
-	r, ok := storage.GetReleaseByReleaseId(2050655424)
-	if ok {
-		telegram.SendRelease(r)
+	sub := args[0]
+	switch sub {
+	case "publishing":
+
+		year, month, day := time.Now().Date()
+		end := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
+		start := end.Add(-1 * time.Hour * 24)
+
+		releases, err := storage.GetNotSentReleasesByDate(start, end)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, release := range releases {
+			telegram.SendRelease(&release)
+		}
+	default:
+		log.Fatalf("Comand %s no defined", sub)
+	}
+}
+
+func ticker() {
+	i := 0
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+	done := make(chan bool)
+	go func() {
+		time.Sleep(10 * time.Second)
+		done <- true
+	}()
+	for {
+		select {
+		case <-done:
+			fmt.Println("Done!")
+			return
+		case t := <-ticker.C:
+			i += 1
+			fmt.Printf("Current time%d: %v\n", i, t)
+		}
 	}
 }
