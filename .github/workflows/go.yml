@@ -17,5 +17,7 @@ jobs:
     - name: Vendor
       run: go mod download
 
+    - name: check
+      run: pwd && ls -la
     - name: Build
       run: go build -o ./build/bandamper -v ./src/bandamper
