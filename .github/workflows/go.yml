@@ -17,11 +17,13 @@ jobs:
       run: go mod download
     - name: Build
       run: go build -o ./build/bandamper -v ./src/bandamper.go
+    - name: Create .env
+      run: echo "{{secrets.MULTILINE_SECRET_TEST}}" >> .env
     - name: Create SSH key
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         ssh-keyscan -H ${{secrets.DEPLOY_HOST}} > ~/.ssh/known_hosts
     - name: Deploy with rsync
-      run: rsync -rav build/* "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}":~/
+      run: rsync -rav .env migrations build/* migrations --delete "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}":"{{ secrets.DEPLOY_PATH }}"/
 
