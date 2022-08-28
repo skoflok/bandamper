@@ -25,11 +25,11 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         ssh-keyscan -H ${{secrets.DEPLOY_HOST}} > ~/.ssh/known_hosts
     - name: Deploy with rsync
-      run: rsync -rav loadenv.sh .env migrations build/* migrations --delete "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}":"${{ secrets.DEPLOY_PATH }}"/
+      run: rsync -rav .env migrations build/* migrations --delete "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}":"${{ secrets.DEPLOY_PATH }}"/
     - name: Database migrate
       run: |
         DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
-        ssh -tt "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}" "cd $DEPLOY_PATH && ./loadenv.sh && ./bandamper migrate up"
+        ssh -tt "${{ secrets.DEPLOY_USER }}"@"${{ secrets.DEPLOY_HOST }}" "cd $DEPLOY_PATH && export $(cat .env | xargs) && ./bandamper migrate up"
         
 
 
