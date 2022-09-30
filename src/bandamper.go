@@ -167,7 +167,7 @@ func telegramCmd(args []string) {
 
 		year, month, day := time.Now().Date()
 		end := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
-		start := end.Add(-1 * time.Hour * 24)
+		start := end.Add(-3 * time.Hour * 24)
 
 		releases, err := storage.GetNotSentReleasesByDate(start, end)
 		if err != nil {
