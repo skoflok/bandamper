@@ -44,7 +44,7 @@ func Up() {
 
 func Down() {
 	m := initMigrate()
-	if err := m.Down(); err != nil {
+	if err := m.Down(); err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("Migration Down error: %v", err)
 	}
 }
