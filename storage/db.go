@@ -43,7 +43,8 @@ featured_track,
 subdomain,
 slug,
 updated_at,
-created_at
+created_at,
+is_sent
 FROM releases where release_id = ?
 ;`
 }

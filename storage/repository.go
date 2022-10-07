@@ -122,6 +122,7 @@ func GetReleaseByReleaseId(id int) (r *Release, ok bool) {
 		&r.Slug,
 		&r.UpdatedAt,
 		&r.CreatedAt,
+		&r.IsSent,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return r, false
