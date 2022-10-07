@@ -37,14 +37,14 @@ func initMigrate() *migrate.Migrate {
 
 func Up() {
 	m := initMigrate()
-	if err := m.Up(); err != nil {
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		log.Fatalf("Migration Up error: %v", err)
 	}
 }
 
 func Down() {
 	m := initMigrate()
-	if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+	if err := m.Down(); err != nil {
 		log.Fatalf("Migration Down error: %v", err)
 	}
 }
